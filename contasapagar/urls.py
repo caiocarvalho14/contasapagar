@@ -9,6 +9,8 @@ urlpatterns = [
     
     path('perfil/',perfil,name='perfil'),
 
+    path('api/', include('api.urls')),
+
     path('',include('users.urls')),
     path('',include('core.urls')),
 ]

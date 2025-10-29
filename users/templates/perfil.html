@@ -2,6 +2,63 @@
 {% block title %}Perfil{% endblock %}
 {% block content %}
 
-<h1>Perfil</h1>
+<div class="container mt-5 block-main">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Editar Perfil</h3>
+                    <form id="profile-edit-form" method="POST">
+                        {% csrf_token %}
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="firstName" class="form-label">Nome</label>
+                                        <input type="text" class="form-control" id="firstName" placeholder="Seu nome"
+                                            name="nome" value="{{ request.user.first_name }}">
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="lastName" class="form-label">Usuário de Acesso</label>
+                                        <input type="text" name="" class="form-control" disabled id="lastName"
+                                            value="{{request.user.username}}" placeholder="@exemplo">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Endereço de Email</label>
+                                    <input name="email" type="email" class="form-control" id="email"
+                                        placeholder="seu@email.com" value="{{request.user.email}}">
+                                </div>
+                                <label for="email" class="form-label">Senha</label>
+                                <div class="input-group">
+                                    <input name="senha" type="password" class="form-control" id="senha"
+                                        placeholder="Atualize sua senha por aqui" value="">
+                                    <div class="input-group-text" id="versenha" style="cursor: pointer;"><i class="bi bi-eye-slash-fill"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    document.getElementById('versenha').addEventListener('click', function () {
+        var senha = document.getElementById('senha');
+        if (senha.type === 'password') {
+            senha.type = 'text';
+            this.innerHTML = '<i class="bi bi-eye-fill"></i>';
+        } else {
+            senha.type = 'password';
+            this.innerHTML = '<i class="bi bi-eye-slash-fill"></i>';
+        }
+    })
+    
+</script>
 
 {% endblock %}

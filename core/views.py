@@ -10,3 +10,7 @@ def inicio(request):
 @login_required
 def painel(request):
     return render(request, 'painel.html')
+
+@login_required
+def fornecedor(request):
+    return render(request, 'fornecedores.html')

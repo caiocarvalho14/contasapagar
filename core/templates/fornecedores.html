@@ -1,28 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Painel{% endblock %}
+{% block title %}Fornecedores{% endblock %}
 {% block content %}
 
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-    <h1 class="mb-0 ">Painel</h1>
+    <h1 class="mb-0 ">Fornecedores</h1>
 
-    <div class="d-flex flex-wrap align-items-center gap-3">
-        <div class="d-flex flex-column align-items-start gap-2">
-            <label for="filtro" class="fw-semibold text-secondary mb-0">Ordenar por:</label>
-            <select id="filtro" class="form-select form-select-sm shadow-sm border-0 bg-light"
-                style="min-width: 160px;">
-                <option value="v">Vencimento</option>
-                <option value="p">Pendente</option>
-                <option value="c">Cancelado</option>
-                <option value="f">Finalizado</option>
-            </select>
-        </div>
-
-        <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm" id="registrar">
-            <i class="bi bi-plus-square-fill fs-5"></i>
-            <span>Registrar</span>
-        </button>
-    </div>
+    <button class="btn btn-primary d-flex align-items-center gap-2 shadow-sm" id="registrar">
+        <i class="bi bi-plus-square-fill fs-5"></i>
+        <span>Cadastrar Fornecedor</span>
+    </button>
 </div>
 
 <hr class="">
@@ -32,23 +19,20 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th scope="col">Valor</th>
-                <th scope="col">Descrição</th>
-                <th scope="col">Fornecedor</th>
-                <th scope="col">Categoria</th>
-                <th scope="col">Emissão</th>
-                <th scope="col">Vencimento</th>
-                <th scope="col">Status</th>
-                <th scope="col">Data Atualização</th>
+                <th scope="col">Nome</th>
+                <th scope="col">CNPJ</th>
+                <th scope="col">Telefone</th>
+                <th scope="col">Email</th>
+                <th scope="col">Endereço</th>
                 <th scope="col">Ações</th>
             </tr>
         </thead>
         <tbody id="container" class="align-middle">
+            
         </tbody>
     </table>
 
 </div>
-
 <!-- Modal básico -->
 <div class="modal fade" id="dynamicModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -78,11 +62,10 @@
     </div>
 </div>
 
-
 {% endblock %}
 
 {% block app_js %}
 
-<script src="{% static 'core/js/painel.js/' %}"></script>
+<script src="{% static 'core/js/fornecedores.js/' %}"></script>
 
 {% endblock %}

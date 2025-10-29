@@ -1,15 +1,34 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 import unicodedata
+from django.http import JsonResponse
+import json
 
-# Create your views here.
-
+@login_required
 def perfil(request):
+    if request.method == "POST":
+        nome = request.POST.get('nome')
+        email = request.POST.get('email')
+        senha = request.POST.get('senha')
+
+        user = request.user
+        user.first_name = nome
+        user.email = email
+        if senha:
+            user.set_password(senha)
+            user.save()
+            return redirect('login')
+        user.save()
+
+        messages.success(request, 'Perfil atualizado com sucesso!')
+        return redirect('perfil')
     return render(request,'perfil.html')
 
 def login_view(request):
+
     if request.method == 'POST':
         usuario = request.POST.get('usuario')
         senha = request.POST.get('senha')
@@ -20,26 +39,23 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return redirect('/')
-        
         else:
             messages.error(request,'Usuário ou senha inválidos')
             return redirect('login')
-
+        
     return render(request, 'login.html')
-
+    
 def logout_view(request):
     logout(request)
     return redirect('login')
 
 def gerar_username(nome):
-    # Remove acentos e espaços do nome
     nome_normalizado = unicodedata.normalize('NFKD', nome).encode('ASCII', 'ignore').decode('ASCII')
-    username_base = ''.join(nome_normalizado.lower().split())  # Ex: "Caio Carvalho" -> "caiocarvalho"
+    username_base = ''.join(nome_normalizado.lower().split())
 
     username = username_base
     contador = 1
 
-    # Se já existir o username, adiciona número incremental
     while User.objects.filter(username=username).exists():
         username = f"{username_base}{contador}"
         contador += 1
@@ -72,5 +88,10 @@ def cadastrar_usuario(request):
         messages.success(request, f'Conta criada com sucesso! Seu usuário é: {username}')
         return redirect('login')
 
+    if request.method == 'VERUSUARIOS':
+        data = json.loads(request.body)
+        nome = data.get('nome')
+        user = gerar_username(nome)
+        return JsonResponse({'username':user})
+    
     return render(request, 'cadastro.html')
-
