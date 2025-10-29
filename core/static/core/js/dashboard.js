@@ -60,8 +60,8 @@ async function carregarDados() {
 
     function atualizarValoresIniciais(){
         document.getElementById('totalcontasregistradas').innerHTML=data.total_contas_registradas
-        document.getElementById('totaldecontasapagar').innerHTML=formatarValor(data.total_a_pagar)
-        document.getElementById('valortotalpago').innerHTML=formatarValor(data.total_pago)
+        document.getElementById('totaldecontasapagar').innerHTML=`${formatarValor(data.total_a_pagar[0])} (${data.total_a_pagar[1]})`
+        document.getElementById('valortotalpago').innerHTML=`${formatarValor(data.total_pago[0])} (${data.total_pago[1]})`
     }
 
     atualizarRegistroAtualizacoes()

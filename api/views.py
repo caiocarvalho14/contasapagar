@@ -131,16 +131,18 @@ def dashboard(request):
         total_contas_registradas = models.Conta.objects.filter(usuario=request.user).count()
         
         contas = models.Conta.objects.filter(usuario=request.user)
-        total_pago = 0
-        total_a_pagar = 0
+        total_pago = [0,0]
+        total_a_pagar = [0,0]
 
         # PEGANDO TOTAL PAGO E A PAGAR
         for conta in contas:
             ultima = models.AtualizacaoConta.objects.filter(conta=conta).last()
             if ultima.status == 'f':
-                total_pago += conta.valor
+                total_pago[0] += conta.valor
+                total_pago[1] +=1
             elif ultima.status == 'p':
-                total_a_pagar += conta.valor
+                total_a_pagar[0] += conta.valor
+                total_a_pagar[1] +=1
         
         atualizacoes_qs = models.AtualizacaoConta.objects.filter(conta__usuario=request.user)
         atualizacoes = []
