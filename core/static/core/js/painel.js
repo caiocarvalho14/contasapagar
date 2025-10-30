@@ -19,11 +19,11 @@ function statusVencimento(dias) {
   if (dias <= 0) {
     return `<small class="text-muted">Vencido</small>`;
   } else if (dias <= 5) {
-    return `<small class="text-danger">Vence em ${dias} dia${dias > 1 ? 's' : ''}</small>`;
+    return `<small class="px-2 text-light bg-danger rounded">Vence em ${dias} dia${dias > 1 ? 's' : ''}</small>`;
   } else if (dias <= 15) {
-    return `<small class="text-warning">Vence em ${dias} dia${dias > 1 ? 's' : ''}</small>`;
+    return `<small class="px-2 text-light bg-warning rounded">Vence em ${dias} dia${dias > 1 ? 's' : ''}</small>`;
   } else {
-    return `<small class="text-primary">Vence em ${dias} dia${dias > 1 ? 's' : ''}</small>`;
+    return `<small class="px-2 text-light bg-primary rounded">Vence em ${dias} dia${dias > 1 ? 's' : ''}</small>`;
   }
 }
 

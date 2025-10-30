@@ -55,8 +55,7 @@ def painel(request):
         acao = data['acao']
         usuario = request.user
         print(data)
-
-
+        
         if acao == 'REGISTRAR':
             conta = models.Conta.objects.create(
             descricao=data['descricao'],
