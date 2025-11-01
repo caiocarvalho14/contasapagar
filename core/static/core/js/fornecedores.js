@@ -1,7 +1,7 @@
 const BASE_URL = window.location.origin
 let csrf = document.getElementById('csrf').value
 async function carregarFornecedores() {
-    let response = await fetch(BASE_URL+'/api/fornecedores', {
+    let response = await fetch(BASE_URL + '/api/fornecedores', {
         method: 'GET',
         headers: {
             "Content-Type": "application/json",
@@ -92,7 +92,57 @@ document.addEventListener('click', async (e) => {
     if (e.target.classList.contains('excluir')) {
         let submit = ` <button type="submit" class="btn btn-primary submit-excluir" data-id="${e.target.dataset.id}">Excluir</button>`
 
+
+
         abrirModal('Deseja excluir o fornecedor?', 'Essa ação é irreversível', submit)
+
+    }
+})
+
+document.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('editar')) {
+        let submit = ` <button type="submit" class="btn btn-primary submit-editar" data-id="${e.target.dataset.id}">Salvar</button>`
+
+        let response = await fetch(BASE_URL + '/api/fornecedores', {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrf
+            },
+        })
+        let data = await response.json()
+        fornecedor = data.filter(f => f.uuid == e.target.dataset.id)[0]
+        console.log(fornecedor)
+
+        let form = `
+      <div class="mb-3">
+          <label for="inputNome" class="form-label">Nome</label>
+          <input type="text" value="${fornecedor.nome}" class="form-control" id="inputNome" placeholder="Insira o nome" step="0.25" min="0" required>
+      </div>
+
+      <div class="mb-3">
+          <label for="inputNome" class="form-label">CNPJ</label>
+          <input type="text" value="${fornecedor.cnpj}" class="form-control" id="inputcnpj" placeholder="Insira o CNPJ" >
+      </div>
+
+      <div class="mb-3">
+          <label for="inputNome" class="form-label">Telefone</label>
+          <input type="number" value="${fornecedor.telefone}" class="form-control" id="inputnumero" placeholder="Insira o Número de Telefone" >
+      </div>
+
+      <div class="mb-3">
+          <label for="inputNome" class="form-label">Email</label>
+          <input type="email" value="${fornecedor.email}" class="form-control" id="inputemail" placeholder="Insira o Email" >
+      </div>
+
+      <div class="mb-3">
+          <label for="inputendereco" class="form-label">Endereço</label>
+          <input type="text" value="${fornecedor.endereco}" class="form-control" id="inputendereco" placeholder="Insira o Endereço" >
+      </div>
+      
+      `
+
+        abrirModal('Deseja editar o fornecedor?', form, submit)
 
     }
 })
@@ -120,7 +170,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
 
         // transformar dados em json
         let data = JSON.stringify(dados)
-        let response = await fetch(BASE_URL+"/api/fornecedores/", {
+        let response = await fetch(BASE_URL + "/api/fornecedores/", {
             method: "POST",
             body: data,
             headers: {
@@ -137,7 +187,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
     if (e.submitter.classList.contains('submit-excluir')) {
         let id = e.submitter.dataset.id
         let data = JSON.stringify(id)
-        let response = await fetch(BASE_URL+"/api/fornecedores/", {
+        let response = await fetch(BASE_URL + "/api/fornecedores/", {
             method: "DELETE",
             body: data,
             headers: {
@@ -150,4 +200,38 @@ document.getElementById('form').addEventListener('submit', async (e) => {
                 fecharModal()
             })
     }
+    
+    if (e.submitter.classList.contains('submit-editar')) {
+        let nome = document.getElementById('inputNome').value
+        let cnpj = document.getElementById('inputcnpj').value
+        let telefone = document.getElementById('inputnumero').value
+        let email = document.getElementById('inputemail').value
+        let endereco = document.getElementById('inputendereco').value
+        let id = e.submitter.dataset.id
+
+        let dados = {
+            id:id,
+            nome: nome,
+            cnpj: cnpj,
+            telefone: telefone,
+            email: email,
+            endereco: endereco
+        }
+
+        // transformar dados em json
+        let data = JSON.stringify(dados)
+        let response = await fetch(BASE_URL + "/api/fornecedores/", {
+            method: "PUT",
+            body: data,
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrf
+            },
+        })
+            .then(response => {
+                carregarFornecedores()
+                fecharModal()
+            })
+    }
+
 })

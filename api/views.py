@@ -1,10 +1,17 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
+import calendar
+import locale
 from django.http import JsonResponse , request
 import datetime
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
 import json
 
 from core import models
+
+locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
 def index(request):
     return JsonResponse({'dados':'dados'}, safe=False)
@@ -127,7 +134,10 @@ def painel(request):
 def dashboard(request):
     if request.method == 'GET':
         # PEGANDO O TOTAL DE CONTAS REGISTRADAS
-        total_contas_registradas = models.Conta.objects.filter(usuario=request.user).count()
+        total_contas_registradas = {
+            'valor':models.Conta.objects.filter(usuario=request.user).aggregate(Sum('valor'))['valor__sum'],
+            'total':models.Conta.objects.filter(usuario=request.user).count()
+        }
         
         contas = models.Conta.objects.filter(usuario=request.user)
         total_pago = [0,0]
@@ -156,6 +166,8 @@ def dashboard(request):
                 'uuid':a.conta.uuid
             })
 
+
+
         # ordenando as atualizacoes por data e hora mais recente
         atualizacoes.sort(key=lambda x: (x['data'], x['hora']), reverse=True)
 
@@ -171,6 +183,7 @@ def dashboard(request):
                 totalFinalizado += conta.valor
             elif ultima.status == 'c':
                 totalCancelado += conta.valor
+        
         chartTotalPorSituacao = {
             'labels':[
                 'Pendente', 'Vencido', 'Finalizado', 'Cancelado'
@@ -180,14 +193,131 @@ def dashboard(request):
             ]
         }
 
-        
+        hoje = datetime.date.today()
+        ano = hoje.year
+        mes = hoje.month
+
+        # Gerar os últimos 6 meses (ano e mês)
+        ultimos_6_meses = []
+        for i in range(5, -1, -1):  # começa de 5 meses atrás até o atual
+            m = mes - i
+            a = ano
+            if m <= 0:
+                m += 12
+                a -= 1
+            ultimos_6_meses.append((a, m))
+
+        # Data inicial para filtrar o banco (primeiro dia do mês mais antigo)
+        ano_inicio, mes_inicio = ultimos_6_meses[0]
+        data_inicio = datetime.date(ano_inicio, mes_inicio, 1)
+
+        # Consultar dados no banco
+        totais_por_mes_db = (
+            models.Conta.objects
+            .filter(data_emissao__gte=data_inicio)
+            .annotate(mes=TruncMonth('data_emissao'))
+            .values('mes')
+            .annotate(total=Sum('valor'))
+            .order_by('mes')
+        )
+
+        # Criar dicionário para lookup rápido
+        totais_dict = {item['mes'].month + item['mes'].year*100: float(item['total']) for item in totais_por_mes_db}
+
+        # Preparar labels e dados do gráfico
+        labels = []
+        data = []
+
+        for ano_m, mes_m in ultimos_6_meses:
+            nome_mes = calendar.month_name[mes_m].capitalize()
+            labels.append(nome_mes)
+            key = mes_m + ano_m*100
+            data.append(totais_dict.get(key, 0))  # 0 se não tiver registro
+
+        chartUltimos6Meses = {
+            'labels': labels,
+            'data': data
+        }
+
+
+        # chartCustoPorFornecedor
+        forecedores_qs = models.Fornecedor.objects.filter(usuario=request.user)[:10]
+        fornecedores_nome = []
+        fornecedor_custo = []
+        for f in forecedores_qs:
+            fornecedores_nome.append(f.nome,)
+            custo_qs = models.Conta.objects.filter(fornecedor=f)
+            custo = 0
+            for f in custo_qs:
+                custo += f.valor
+            fornecedor_custo.append(custo)
+        chartCustoPorFornecedor = {
+            'labels':fornecedores_nome,
+            'data':fornecedor_custo
+        }
+
+        # chartTotalPorCategoria
+        categorias_ar = ['água','energia','internet','aluguel','outros']
+        categorias_vl = [0,0,0,0,0]
+
+        for c in contas:
+            if c.categoria in categorias_ar:
+                categorias_vl[categorias_ar.index(c.categoria)] += c.valor
+
+        chartTotalPorCategoria = {
+            'labels':categorias_ar,
+            'data':categorias_vl
+        }
+
+        # KPIS DE 5 e 15 DIAS DE VENCIMENTO
+
+        vencemEm5Dias = {
+            'total':0,
+            'contas':[]
+        }
+        vencemEm15Dias = {
+            'total':0,
+            'contas':[]
+        }
+
+        for c in contas:
+            ultima = models.AtualizacaoConta.objects.filter(conta=c).last()
+            hoje = datetime.date.today()
+            if ultima.status == 'p':
+                vencimento = (c.data_vencimento - hoje).days
+                if vencimento <= 5:
+                    vencemEm5Dias['total'] += 1
+                    vencemEm5Dias['contas'].append({
+                        'descricao':c.descricao,
+                        'valor':c.valor,
+                        'vencimento':formatarData(c.data_vencimento),
+                        'dias':vencimento
+                    })
+                    continue
+                if vencimento <= 15:
+                    vencemEm15Dias['total'] += 1
+                    vencemEm15Dias['contas'].append({
+                        'descricao':c.descricao,
+                        'valor':c.valor,
+                        'vencimento':formatarData(c.data_vencimento),
+                        'dias':vencimento
+                    })
+
+        kpiDiasVencimento = {
+            'vencemEm5Dias':vencemEm5Dias,
+            'vencemEm15Dias':vencemEm15Dias
+        }
 
         dados = {
             'total_contas_registradas':total_contas_registradas,
             'total_pago':total_pago,
             'total_a_pagar':total_a_pagar,
-            'atualizacoes':atualizacoes,
-            'chartTotalPorSituacao':chartTotalPorSituacao
+            'atualizacoes':atualizacoes[:20],
+            'chartTotalPorSituacao':chartTotalPorSituacao,
+            'chartUltimos6Meses':chartUltimos6Meses,
+            'chartCustoPorFornecedor':chartCustoPorFornecedor,
+            'chartTotalPorCategoria':chartTotalPorCategoria,
+            'kpiDiasVencimento':kpiDiasVencimento
         }
 
         return JsonResponse(dados,safe=False)
@@ -225,5 +355,15 @@ def fornecedores(request):
         fornecedor.delete()
         return JsonResponse({'status':'Deletado'},safe=False)
 
-    
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        fornecedor = models.Fornecedor.objects.get(uuid=data['id'],usuario=usuario)
+        fornecedor.nome=data['nome']
+        fornecedor.cnpj=data['cnpj']
+        fornecedor.telefone=data['telefone']
+        fornecedor.email=data['email']
+        fornecedor.endereco=data['endereco']
+        fornecedor.save()
+        return JsonResponse({'status':'Atualizado'},safe=False)
+
     return JsonResponse({'status':'Método não permitido.'},safe=False)
