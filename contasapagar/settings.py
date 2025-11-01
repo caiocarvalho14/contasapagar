@@ -12,6 +12,7 @@ import dj_database_url
 # SECURITY WARNING: keep the secret key used in production secret!
 
 DEBUG = True
+
 print("DEBUG: DATABASE_URL =", os.environ.get('DATABASE_URL'))
 STATIC_URL = '/static/'
 
@@ -26,6 +27,10 @@ CORS_ALLOWED_ORIGINS = [
 SECRET_KEY = 'django-insecure-6)9lk95yu83jg#@&9o__!qiv6q$7j=4^j8d=%f12tes&=c4fu8'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
