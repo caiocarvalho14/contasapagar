@@ -11,7 +11,7 @@ import dj_database_url
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-DEBUG = True
+DEBUG = False
 
 print("DEBUG: DATABASE_URL =", os.environ.get('DATABASE_URL'))
 STATIC_URL = '/static/'
@@ -93,6 +93,7 @@ WSGI_APPLICATION = 'contasapagar.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL'),
+        # default='postgresql://contasapagar_db_user:24ozB9taU1sYsk6VIFo3C6zLP3PXAd1T@dpg-d431tlemcj7s73ajdhdg-a.oregon-postgres.render.com/contasapagar_db',
         conn_max_age=600,
         ssl_require=True
     )
