@@ -85,9 +85,17 @@ async function carregarDados() {
     atualizarValoresIniciais()
 }
 
+// função para deletar elementos com a classe loading
+function removerLoading() {
+    let loading = Array.from(document.getElementsByClassName('loading'));
+    loading.forEach(el => el.remove());
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     let csrf = document.getElementById('csrf').value
-    carregarDados()
+    await carregarDados()
+    removerLoading()
+
 
     document.addEventListener('click', async (e) => {
         if (e.target.classList.contains('15dias')) {

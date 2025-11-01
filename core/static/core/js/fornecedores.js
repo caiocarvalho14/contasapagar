@@ -1,5 +1,10 @@
 const BASE_URL = window.location.origin
 let csrf = document.getElementById('csrf').value
+// função para deletar elementos com a classe loading
+function removerLoading() {
+    let loading = Array.from(document.getElementsByClassName('loading'));
+    loading.forEach(el => el.remove());
+}
 async function carregarFornecedores() {
     let response = await fetch(BASE_URL + '/api/fornecedores', {
         method: 'GET',
@@ -86,7 +91,8 @@ document.getElementById('registrar').addEventListener('click', async (e) => {
 })
 
 document.addEventListener('DOMContentLoaded', async () => {
-    carregarFornecedores()
+    await carregarFornecedores()
+    removerLoading()
 })
 document.addEventListener('click', async (e) => {
     if (e.target.classList.contains('excluir')) {

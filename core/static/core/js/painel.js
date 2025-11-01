@@ -15,6 +15,12 @@ async function carregarFornecedores(id = '') {
   return string
 }
 
+// função para deletar elementos com a classe loading
+function removerLoading() {
+    let loading = Array.from(document.getElementsByClassName('loading'));
+    loading.forEach(el => el.remove());
+}
+
 function statusVencimento(dias) {
   if (dias <= 0) {
     return `<small class="text-muted">Vencido</small>`;
@@ -109,7 +115,9 @@ function fecharModal() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  carregarTabela(document.getElementById('filtro').value)
+  await carregarTabela(document.getElementById('filtro').value)
+
+  removerLoading()
 
   document.getElementById('filtro').addEventListener('change', async (e) => {
     carregarTabela(document.getElementById('filtro').value)

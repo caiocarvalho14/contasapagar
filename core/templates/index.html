@@ -22,7 +22,11 @@
                     <div class="card border p-3 d-flex flex-row justify-content-between align-items-center card-1">
                         <div class="text-start w-100" id="itens-estoque">
                             <h6 class="text-muted mb-1">Total de Contas Registradas</h6>
-                            <h3 class="fw-bold mb-1" id="totalcontasregistradas"></h3>
+                            <h3 class="fw-bold mb-1" id="totalcontasregistradas">
+                                <h5 class="card-title placeholder-glow loading">
+                                    <span class="placeholder col-10"></span>
+                                </h5>
+                            </h3>
                         </div>
                         <div class="d-flex align-items-center justify-content-center rounded-3"
                             style="background-color: #eef4ff; width: 50px; height: 50px;">
@@ -37,7 +41,11 @@
                     <div class="card border p-3 d-flex flex-row justify-content-between align-items-center card-1">
                         <div class="text-start w-100" id="valor-estoque">
                             <h6 class="text-muted mb-1">Valor Toltal Pago</h6>
-                            <h3 class="fw-bold mb-1" id="valortotalpago"></h3>
+                            <h3 class="fw-bold mb-1" id="valortotalpago">
+                                <h5 class="card-title placeholder-glow loading">
+                                    <span class="placeholder col-10"></span>
+                                </h5>
+                            </h3>
                         </div>
                         <div class="d-flex align-items-center justify-content-center rounded-3"
                             style="background-color: #eef4ff; width: 50px; height: 50px;">
@@ -52,7 +60,11 @@
                     <div class="card border p-3 d-flex flex-row justify-content-between align-items-center card-1">
                         <div class="text-start w-100" id="receita-mes">
                             <h6 class="text-muted mb-1">Valor Total a Pagar</h6>
-                            <h3 class="fw-bold mb-1" id="totaldecontasapagar"></h3>
+                            <h3 class="fw-bold mb-1" id="totaldecontasapagar">
+                                <h5 class="card-title placeholder-glow loading">
+                                    <span class="placeholder col-10"></span>
+                                </h5>
+                            </h3>
 
                         </div>
                         <div class="d-flex align-items-center justify-content-center rounded-3"
@@ -79,6 +91,14 @@
                         <div class="log-list-container" style="height: 300px; overflow-y: auto;">
                             <ul class="list-group list-group-flush rounded" id="registrodeatualizacoes">
 
+                                <div class="d-flex position-absolute w-100 justify-content-center align-items-center loading"
+                                    style="height: 300px;">
+                                    <div class="spinner-border spinner-border-lg" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+
+
                             </ul>
                         </div>
                     </div>
@@ -96,6 +116,13 @@
 
                         <!-- Container do gráfico -->
                         <div style="height: 300px; width: 100%; " class="d-flex justify-content-center">
+
+                            <div class="d-flex position-absolute w-100 justify-content-center align-items-center loading"
+                                style="height: 300px;">
+                                <div class="spinner-border spinner-border-lg" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
 
                             <canvas id="chartTotalPorSituacao"
                                 style="display: block; box-sizing: border-box; height: 300px;" width="" height="300">
@@ -124,11 +151,16 @@
 
                         <!-- Container do gráfico -->
                         <div style="height: 250px; width: 100%; position: relative; overflow-x: auto;">
+                            <div class="d-flex position-absolute w-100 justify-content-center align-items-center loading"
+                                style="height: 200px;">
+                                <div class="spinner-border spinner-border-lg" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
                             <canvas id="chatUltimos6Meses"
                                 style="display: block; box-sizing: border-box; height: 300px;" width="" height="300">
 
                             </canvas>
-
                         </div>
                     </div>
                 </div>
@@ -149,6 +181,13 @@
 
                     <!-- Container do gráfico -->
                     <div style="text-align: center; height: 300px;">
+
+                        <div class="d-flex position-absolute w-100 justify-content-center align-items-center loading"
+                            style="height: 250px;">
+                            <div class="spinner-border spinner-border-lg" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
 
                         <canvas id="chartCustoPorFornecedor"
                             style="display: block; box-sizing: border-box; height: 298px; ;" width=""
@@ -171,6 +210,13 @@
 
                     <!-- Container do gráfico -->
                     <div style="height: 300px; width: 100%; " class="d-flex justify-content-center">
+
+                        <div class="d-flex position-absolute w-100 justify-content-center align-items-center loading"
+                            style="height: 250px;">
+                            <div class="spinner-border spinner-border-lg" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
 
                         <canvas id="chartTotalPorCategoria"
                             style="display: block; box-sizing: border-box; height: 300px; width: 300px;" width="300"

@@ -22,6 +22,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "https://contasapagar-y54f.onrender.com",
+    "https://contasapagar.caiocarvalho.dev.br"
 ]
 
 SECRET_KEY = 'django-insecure-6)9lk95yu83jg#@&9o__!qiv6q$7j=4^j8d=%f12tes&=c4fu8'
@@ -36,7 +37,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['contasapagar-y54f.onrender.com','127.0.0.1']
+ALLOWED_HOSTS = ['contasapagar-y54f.onrender.com','127.0.0.1','contasapagar.caiocarvalho.dev.br']
 
 LOGIN_URL = '/login/'
 
@@ -93,7 +94,6 @@ WSGI_APPLICATION = 'contasapagar.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL'),
-        # default='postgresql://contasapagar_db_user:24ozB9taU1sYsk6VIFo3C6zLP3PXAd1T@dpg-d431tlemcj7s73ajdhdg-a.oregon-postgres.render.com/contasapagar_db',
         conn_max_age=600,
         ssl_require=True
     )
