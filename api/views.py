@@ -11,7 +11,10 @@ import json
 
 from core import models
 
-locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+try:
+    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+except locale.Error:
+    locale.setlocale(locale.LC_TIME, 'C')
 
 def index(request):
     return JsonResponse({'dados':'dados'}, safe=False)
