@@ -88,10 +88,4 @@ def cadastrar_usuario(request):
         messages.success(request, f'Conta criada com sucesso! Seu usuário é: {username}')
         return redirect('login')
 
-    if request.method == 'VERUSUARIOS':
-        data = json.loads(request.body)
-        nome = data.get('nome')
-        user = gerar_username(nome)
-        return JsonResponse({'username':user})
-    
     return render(request, 'cadastro.html')

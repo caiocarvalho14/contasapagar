@@ -10,6 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
+DEBUG = False
+
 STATIC_URL = '/static/'
 
 CORS_ALLOW_CREDENTIALS = True
@@ -27,12 +29,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
 ALLOWED_HOSTS = ['contasapagar-y54f.onrender.com','127.0.0.1']
 
 LOGIN_URL = '/login/'
-
 
 # Application definition
 

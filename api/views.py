@@ -8,7 +8,7 @@ from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
 import json
-
+import unicodedata
 from core import models
 
 try:
@@ -370,3 +370,23 @@ def fornecedores(request):
         return JsonResponse({'status':'Atualizado'},safe=False)
 
     return JsonResponse({'status':'Método não permitido.'},safe=False)
+
+def gerar_username(nome):
+    nome_normalizado = unicodedata.normalize('NFKD', nome).encode('ASCII', 'ignore').decode('ASCII')
+    username_base = ''.join(nome_normalizado.lower().split())
+
+    username = username_base
+    contador = 1
+
+    while User.objects.filter(username=username).exists():
+        username = f"{username_base}{contador}"
+        contador += 1
+
+    return username
+
+def getUsername(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        nome = data.get('nome')
+        user = gerar_username(nome)
+        return JsonResponse({'username':user})
