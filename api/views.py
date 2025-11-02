@@ -31,6 +31,11 @@ def painel(request):
         contas_qs = models.Conta.objects.filter(usuario=user)
         contas = []
 
+        def retornarMetodoDePagamento(status,metodo):
+            if status == 'f':
+                return metodo
+            return ''
+
         for c in contas_qs:
             atualizacao = models.AtualizacaoConta.objects.filter(conta=c).last()
             
@@ -55,7 +60,8 @@ def painel(request):
                 'fornecedor':fornecedor,
                 'fornecedor_id':c.fornecedor.uuid if c.fornecedor else '--',
                 'uuid':c.uuid,
-                'data_status':formatarData(atualizacao.data)
+                'data_status':formatarData(atualizacao.data),
+                'pagamento':retornarMetodoDePagamento(atualizacao.status,atualizacao.get_pagamento_display())
             })
 
         return JsonResponse(contas,safe=False)
@@ -96,7 +102,8 @@ def painel(request):
                 conta = conta,
                 data = datetime.date.today(),
                 hora = datetime.datetime.now().strftime('%H:%M:%S'),
-                status = 'f'
+                status = 'f',
+                pagamento = data['metodo']
             )
 
             return JsonResponse({'id':data['id'],'status':'marco como pago'}, safe=False)

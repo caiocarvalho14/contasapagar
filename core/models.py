@@ -46,6 +46,16 @@ class AtualizacaoConta(models.Model):
     conta = models.ForeignKey(Conta , on_delete=models.CASCADE )
     data = models.DateField(null=True,blank=True)
 
+    pagamento_choices = (
+        ('d','Dinheiro/Espécie'),
+        ('p','Pix'),
+        ('c','Cartão de Crédito'),
+        ('b','Cartão de Débito'),
+        ('t','Transferência'),
+        ('o','Outros')
+    )
+    pagamento = models.CharField(max_length=1,choices=pagamento_choices,default=None,null=True,blank=True)
+
     hora = models.TimeField(null=True,blank=True)
 
     status_choices = (

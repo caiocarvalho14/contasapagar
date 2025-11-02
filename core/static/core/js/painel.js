@@ -15,10 +15,14 @@ async function carregarFornecedores(id = '') {
   return string
 }
 
+function formatarValor(valor) {
+  return valor ? `R$ ${(Number(valor).toFixed(2)).replace('.', ',')}` : 'R$ 0,00'
+}
+
 // função para deletar elementos com a classe loading
 function removerLoading() {
-    let loading = Array.from(document.getElementsByClassName('loading'));
-    loading.forEach(el => el.remove());
+  let loading = Array.from(document.getElementsByClassName('loading'));
+  loading.forEach(el => el.remove());
 }
 
 function statusVencimento(dias) {
@@ -58,11 +62,11 @@ async function carregarTabela(statusFiltro = '') {
 
   dados = data.sort((a, b) => prioridadeAtual[a.status] - prioridadeAtual[b.status]);
 
-  function statusTexto(s) {
+  function statusTexto(s, p) {
     switch (s) {
       case 'c': return '<td class="table-danger">Cancelado</td>';
       case 'p': return '<td class="table-warning">Pendente</td>';
-      case 'f': return '<td class="table-success">Finalizado</td>';
+      case 'f': return `<td class="table-success">Finalizado <br> <small>${p}</small></td>`;
       case 'v': return '<td class="table-danger">Vencido</td>';
       default: return '<td class="table-secondary">Desconhecido</td>';
     }
@@ -75,7 +79,7 @@ async function carregarTabela(statusFiltro = '') {
     string += `
         
         <tr>
-                <td>R$ ${(d.valor).replace('.', ',')}</td>
+                <td>${formatarValor(d.valor)}</td>
                 <td>${d.descricao}</td>
                 <td>${d.fornecedor ? d.fornecedor : '<small>Sem Fornecedor.</small>'}</td>
                 <td>${d.categoria}</td>
@@ -85,7 +89,7 @@ async function carregarTabela(statusFiltro = '') {
                 <br>
                 ${d.status == 'p' || d.status == 'v' ? statusVencimento(d.dias_para_vencer) : ''}
                 </td>
-                ${statusTexto(d.status)}
+                ${statusTexto(d.status, d.pagamento)}
                 <td>${d.data_status}</td>
                 <td>
                 ${d.status == 'f' ? `<button class="btn btn-outline-secondary p-2" disabled><i class="bi bi-check2" ></i></button>  ` : `<button title="Marcar como Pago" class="btn btn-outline-success  p-2""><i data-id="${d.uuid}" class="bi bi-check2 pagar"></i></button>`}
@@ -202,18 +206,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.target.classList.contains('pagar')) {
       id = e.target.dataset.id
       let submit = ` <button type="submit" class="btn btn-success submit-pagar" data-id="${id}">Marcar como Pago</button>`
-      let response = await fetch(BASE_URL+"/api/painel/", {
+      let response = await fetch(BASE_URL + "/api/painel/", {
         method: "GET",
         credentials: "include" // muito importante para enviar cookies
       })
       let data = await response.json()
       conta = data.filter(d => d.uuid == id)
       let string = `
-      <div>
-        <p>Valor: ${data[0].valor}</p>
-        <p>Descrição: ${data[0].descricao}</p>
-        <p>Data de Vencimento: ${data[0].vencimento}</p>
-    </div>
+        <div>
+          <p>Valor: ${formatarValor(data[0].valor)}</p>
+          <p>Descrição: ${data[0].descricao}</p>
+          <p>Data de Vencimento: ${data[0].vencimento}</p>
+          <div class="mb-3">
+          <label for="inputMetodo" class="form-label">Selecione o Método de Pagamento</label>
+          <select name="categoria" class="form-select" id="inputMetodo" required>
+              <option value="d">Dinheiro</option>
+              <option value="p">Pix</option>
+              <option value="c">Cartão de Crédito</option>
+              <option value="b">Cartão de Débito</option>
+              <option value="t">Transferência</option>
+              <option value="o">Outro</option>
+          </select>
+        </div>
+        </div>
       `
       abrirModal('Deseja marcar como pago?', string, submit)
 
@@ -303,7 +318,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
 
     // transformar dados em json
     let data = JSON.stringify(dados)
-    let response = await fetch(BASE_URL+"/api/painel/", {
+    let response = await fetch(BASE_URL + "/api/painel/", {
       method: "POST",
       body: data,
       headers: {
@@ -320,7 +335,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
   if (e.submitter.classList.contains('submit-excluir')) {
     let id = e.submitter.dataset.id
     let data = JSON.stringify(id)
-    let response = await fetch(BASE_URL+"/api/painel/", {
+    let response = await fetch(BASE_URL + "/api/painel/", {
       method: "DELETE",
       body: data,
       headers: {
@@ -336,11 +351,13 @@ document.getElementById('form').addEventListener('submit', async (e) => {
 
   if (e.submitter.classList.contains('submit-pagar')) {
     let id = e.submitter.dataset.id
+    let metodo = document.getElementById('inputMetodo').value
     let data = JSON.stringify({
       id: id,
-      acao: 'PAGAR'
+      acao: 'PAGAR',
+      metodo: metodo
     })
-    let response = await fetch(BASE_URL+"/api/painel/", {
+    let response = await fetch(BASE_URL + "/api/painel/", {
       method: "POST",
       body: data,
       headers: {
@@ -377,7 +394,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
 
     // transformar dados em json
     let data = JSON.stringify(dados)
-    let response = await fetch(BASE_URL+"/api/painel/", {
+    let response = await fetch(BASE_URL + "/api/painel/", {
       method: "PUT",
       body: data,
       headers: {
