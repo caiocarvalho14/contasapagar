@@ -224,7 +224,7 @@ def dashboard(request):
         # Consultar dados no banco
         totais_por_mes_db = (
             models.Conta.objects
-            .filter(data_emissao__gte=data_inicio)
+            .filter(data_emissao__gte=data_inicio,usuario=request.user)
             .annotate(mes=TruncMonth('data_emissao'))
             .values('mes')
             .annotate(total=Sum('valor'))
