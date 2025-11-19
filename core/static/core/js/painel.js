@@ -1,5 +1,26 @@
 const BASE_URL = window.location.origin
 
+function carregarModal() {
+        const loadingModal = document.getElementById('loadingModal');
+        if (loadingModal) {
+            // Altera o estilo para 'flex' para exibir o container e centralizar o spinner
+            loadingModal.style.display = 'flex';
+            console.log('Modal de carregamento iniciado.');
+        }
+    }
+
+    /**
+     * Torna o modal de carregamento invisível.
+     */
+    function pararCarregar() {
+        const loadingModal = document.getElementById('loadingModal');
+        if (loadingModal) {
+            // Altera o estilo para 'none' para ocultar o container
+            loadingModal.style.display = 'none';
+            console.log('Modal de carregamento parado.');
+        }
+    }
+
 async function carregarFornecedores(id = '') {
   let response = await fetch(`${BASE_URL}/api/fornecedores/`, {
     method: "GET",
@@ -238,6 +259,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (e.target.classList.contains('carregar-imagem')) {
       const arquivo = document.getElementById('image-input').files[0];
+      if (!arquivo){
+        return
+      }
+      carregarModal()
       const reader = new FileReader();
 
       reader.onload = async () => {
@@ -282,7 +307,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return JSON.parse(limpo);
           }
           const data = await res.json();
-
+          pararCarregar()
           try {
             let ai_res = data.candidates[0].content.parts[0].text
             let resposta = extrairJSON(ai_res)

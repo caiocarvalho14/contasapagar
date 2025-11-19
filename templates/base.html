@@ -17,6 +17,15 @@
 </head>
 
 <body>
+    <div id="loadingModal" class=" justify-content-center align-items-center" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background-color: rgba(255, 255, 255, 0.8); z-index: 1050; 
+            display: none;">
+
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+
+    </div>
     <input type="hidden" name="" id="csrf" value="{{ csrf_token }}">
     <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
         <div class="container">
@@ -63,6 +72,7 @@
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
 {% block app_js %}
 {% endblock %}
 
