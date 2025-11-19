@@ -9,4 +9,5 @@ urlpatterns = [
     path('dashboard/',views.dashboard,name='dashboard'),
     path('fornecedores/',views.fornecedores,name='fornecedores'),
     path('getUsername/',views.getUsername,name='getUsername'),
+    path('verificar/',views.verificar_discord)
 ]

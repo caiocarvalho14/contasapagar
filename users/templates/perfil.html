@@ -24,16 +24,34 @@
                                             value="{{request.user.username}}" placeholder="@exemplo">
                                     </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Endereço de Email</label>
-                                    <input name="email" type="email" class="form-control" id="email"
-                                        placeholder="seu@email.com" value="{{request.user.email}}">
+                                <div class="row">
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="email" class="form-label">Endereço de Email</label>
+                                        <input name="email" type="email" class="form-control" id="email"
+                                            placeholder="seu@email.com" value="{{request.user.email}}">
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label class="form-label">Token de Verificação do Discord</label>
+
+                                        <div class="position-relative">
+                                            <input type="text" class="form-control pe-5" disabled
+                                                value="{{request.user.token.token}}">
+                                            {% if request.user.token.verificado == False %}
+                                            <i class="bi bi-exclamation-circle position-absolute text-danger top-50 translate-middle-y end-0 me-3"></i>
+                                            {% else %}
+                                            <i class="bi bi-check-circle position-absolute text-primary top-50 translate-middle-y end-0 me-3"></i>
+                                            {% endif %}
+                                            
+                                        </div>
+                                    </div>
+
                                 </div>
                                 <label for="email" class="form-label">Senha</label>
                                 <div class="input-group">
                                     <input name="senha" type="password" class="form-control" id="senha"
                                         placeholder="Atualize sua senha por aqui" value="">
-                                    <div class="input-group-text" id="versenha" style="cursor: pointer;"><i class="bi bi-eye-slash-fill"></i></div>
+                                    <div class="input-group-text" id="versenha" style="cursor: pointer;"><i
+                                            class="bi bi-eye-slash-fill"></i></div>
                                 </div>
                             </div>
                         </div>
@@ -58,7 +76,7 @@
             this.innerHTML = '<i class="bi bi-eye-slash-fill"></i>';
         }
     })
-    
+
 </script>
 
 {% endblock %}

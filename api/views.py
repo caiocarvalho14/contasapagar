@@ -8,8 +8,18 @@ from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
 import json
+import requests
 import unicodedata
+
 from core import models
+from users.models import UserToken
+from django.views.decorators.csrf import csrf_exempt
+
+def avisar(discord_id, mensagem):
+    requests.post(
+        "http://127.0.0.1:8080/atualizar",
+        json={"user_id": discord_id, "mensagem": mensagem}
+    )
 
 try:
     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
@@ -88,12 +98,15 @@ def painel(request):
             if hoje > datetime.datetime.strptime(data['data_vencimento'], '%Y-%m-%d').date() and status == 'p' :
                 status = 'v'
 
+
+
             models.AtualizacaoConta.objects.create(
                 conta=conta,
                 data=datetime.date.today(),
                 hora = datetime.datetime.now().strftime('%H:%M:%S'),
                 status=status
             )
+            # avisar(UserToken.objects.get(user=usuario).dc_id, f"**Nova conta registrada!**  `R$ {data['valor']}`, {data['descricao']}.")
 
         if acao == "PAGAR":
 
@@ -397,3 +410,20 @@ def getUsername(request):
         nome = data.get('nome')
         user = gerar_username(nome)
         return JsonResponse({'username':user})
+
+@csrf_exempt
+def verificar_discord(request):
+    token = request.GET['token']
+    try:
+        user = UserToken.objects.get(token=token)
+        if user.verificado == True:
+            return JsonResponse({'status':'Ocorreu um erro, tente novamente.'}, status=300)
+        dc_id = request.GET['id']
+        if len(dc_id) != 18:
+            return JsonResponse({'status':'Ocorreu um erro, tente novamente.'}, status=300)
+        user.verificado = True
+        user.dc_id=dc_id
+        user.save()
+        return JsonResponse({'status':'Autenticado com sucesso!'}, status=200)
+    except:
+        return JsonResponse({'status':'Código não encontrado.'}, status=500)
