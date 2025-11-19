@@ -11,7 +11,7 @@ import dj_database_url
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-DEBUG = True
+DEBUG = False
 
 if DEBUG == False:
     DATABASES = {
