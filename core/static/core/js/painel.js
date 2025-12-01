@@ -266,8 +266,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const reader = new FileReader();
 
       reader.onload = async () => {
-        const base64Completo = reader.result;    // data:image/jpeg;base64,XXXXXXXXX
-        const base64Puro = base64Completo.split(",")[1]; // só o base64
+        const base64Completo = reader.result;
+        const base64Puro = base64Completo.split(",")[1];
 
         const apiKey = "AIzaSyBkxlTpX6IBkISabn-IBsIh8OTUNk5yzvE";
         const url =
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 { text: 'Analise a imagem enviada e extraia apenas dados de contas ou talões. Retorne exatamente no seguinte formato JSON: {"valor_total":"","descricao_minima":"","data_vencimento":"","data_emissao":"","categoria":""}. Categorias permitidas: agua, energia, internet, aluguel, outros. Regras: (1) só responda JSON se a imagem for realmente uma conta; (2) se não for conta ou talão, responda apenas: "Erro: a imagem não parece ser uma conta ou talão válido."; (3) valor_total deve ser numérico; (4) data_vencimento deve estar no formato AAAA-MM-DD; (5) data_emissao deve estar no formato AAAA-MM-DD e deve ser obtida procurando qualquer informação como "data de emissão", "data da fatura" ou equivalente; (6) não invente dados — se não identificar algo, deixe vazio "".' },
                 {
                   inline_data: {
-                    mime_type: arquivo.type, // exemplo: image/png, image/jpeg
+                    mime_type: arquivo.type,
                     data: base64Puro
                   }
                 }
@@ -298,7 +298,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             body: JSON.stringify(body)
           });
           function extrairJSON(texto) {
-            // remove o bloco ```json ``` ou ``` ```
             const limpo = texto
               .replace(/```json/gi, "")
               .replace(/```/g, "")

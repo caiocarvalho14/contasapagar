@@ -405,9 +405,8 @@ def gerar_username(nome):
     return username
 
 def getUsername(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        nome = data.get('nome')
+    if request.method == 'GET':
+        nome = request.GET['nome']
         user = gerar_username(nome)
         return JsonResponse({'username':user})
 

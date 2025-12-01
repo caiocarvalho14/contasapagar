@@ -85,7 +85,9 @@ def cadastrar_usuario(request):
         )
         user.save()
 
+        user = authenticate(request, username=username, password=senha)
+        login(request, user)
         messages.success(request, f'Conta criada com sucesso! Seu usuário é: {username}')
-        return redirect('login')
+        return redirect('/')
 
     return render(request, 'cadastro.html')

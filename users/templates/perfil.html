@@ -37,9 +37,9 @@
                                             <input type="text" class="form-control pe-5" disabled
                                                 value="{{request.user.token.token}}">
                                             {% if request.user.token.verificado == False %}
-                                            <i class="bi bi-exclamation-circle position-absolute text-danger top-50 translate-middle-y end-0 me-3"></i>
+                                            <i class="bi bi-exclamation-circle position-absolute text-danger top-50 translate-middle-y end-0 me-3" title="Discord não verificado!"></i>
                                             {% else %}
-                                            <i class="bi bi-check-circle position-absolute text-primary top-50 translate-middle-y end-0 me-3"></i>
+                                            <i class="bi bi-check-circle position-absolute text-primary top-50 translate-middle-y end-0 me-3" title="Discord Verificado!"></i>
                                             {% endif %}
                                             
                                         </div>
